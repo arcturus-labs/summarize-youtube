@@ -22,21 +22,48 @@ def get_transcript(video_id):
 def summarize_transcript(transcript, video_id, model="gpt-4.1-mini"):
     client = OpenAI()
     system_prompt = f"""
-You are a video transcript summarizer. The video ID is {video_id}.
-Here is the video transcript which includes the timestamp in seconds (pay special attention to timestamps because you'll be asked about them later).
----
+You are an AI assistant specialized in summarizing YouTube video transcripts. Your task is to provide a comprehensive, well-structured summary that captures the essence of the video content.
+Follow these steps to create your summary:
+
+1. Quick Overview:
+   Create a brief (2-3 sentences) overview of the video's main topic and purpose. Place this at the beginning of your summary.
+
+2. Detailed Summary:
+   - Provide a detailed summary of the video content in well-formatted markdown prose.
+   - Use appropriate headings (##, ###) to structure the summary logically.
+   - Include 3-5 main sections (or more if needed), each covering a major topic or theme from the video.
+   - Within each section, use subsections or bullet points as needed to break down subtopics.
+   - Cite key moments, notable quotes, or visual elements referenced, include them in the summary.
+      - Create YouTube URL links for these key points using the format: [link](https://www.youtube.com/watch?v={video_id}&t=X), where X is the timestamp in seconds.
+      - Key moments should often include quotations for important moments.
+      - Never directly mention the timestamp in the summary, instead use the YouTube URL links.
+   - For detailed summary sections, make use of bulleted lists for ease of reading.
+
+3. Conclusion:
+   - Summarize the main takeaways from the video in 2-3 sentences.
+   - If applicable, mention any call-to-action or next steps suggested in the video.
+
+
+General guidelines:
+- Maintain a neutral tone throughout your summary.
+- Focus on accurately representing the video's content.
+- Make your summary informative and easy to navigate.
+- Allow readers to quickly understand the video's content and locate specific information if needed.
+
+Additional information:
+The format of the transcript is an array of JSON objects like this `{{'text': 'whoa simmer down there', 'start': 2.24, 'duration': 3.0}}`. The `start` timestamp and the `duration` is in seconds.
+
+Here's the information you need:
+
+<video_id>
+{video_id}
+</video_id>
+
+<transcript>
 {transcript}
----
-In subsequent conversation, if someone asks about a URL to a point in the video then use the standard YouTube URL format with the video ID and the timestamp in seconds, e.g., https://www.youtube.com/watch?v={video_id}&t=1234s.
+</transcript>
 """
-    user_prompt = """\
-Create a quick summary of the video transcript above as a bulleted list of topics covered in time order. For each bullet, include the following:
-- the topic
-- a very terse summary of the topic (one sentence)
-- the timestamp (seconds, just like above) of the first occurrence of that topic along with the line of transcript that introduces the topic
-- the timestamp (seconds) of the most important part of the topic along with the line of transcript that introduces the topic
-This summary serves as a quick reference for later, but shouldn't influence the formal summary you'll be asked to write later which will be more detailed and prose-like.
-"""
+    user_prompt = "Now, create a summary according to the rules above."
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
@@ -51,10 +78,10 @@ This summary serves as a quick reference for later, but shouldn't influence the 
 
 def main():
     parser = argparse.ArgumentParser(description="Summarize a YouTube video using LLMs and timestamps.")
-    parser.add_argument("url", help="YouTube video URL")
+    parser.add_argument("video_id", help="YouTube video ID")
     parser.add_argument("--model", default="gpt-4.1-mini", help="OpenAI model to use (default: gpt-4.1-mini)")
     args = parser.parse_args()
-    video_id = extract_video_id(args.url)
+    video_id = args.video_id
     transcript = get_transcript(video_id)
     summarize_transcript(transcript, video_id, model=args.model)
 
