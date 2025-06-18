@@ -1,0 +1,11 @@
+README.md
+pyproject.toml
+summarize_youtube/__init__.py
+summarize_youtube/__main__.py
+summarize_youtube/cli.py
+summarize_youtube.egg-info/PKG-INFO
+summarize_youtube.egg-info/SOURCES.txt
+summarize_youtube.egg-info/dependency_links.txt
+summarize_youtube.egg-info/entry_points.txt
+summarize_youtube.egg-info/requires.txt
+summarize_youtube.egg-info/top_level.txt

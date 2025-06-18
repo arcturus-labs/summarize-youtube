@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "summarize_youtube"
+version = "0.1.0"
+description = "Summarize YouTube videos with LLMs and timestamps."
+requires-python = ">=3.8"
+dependencies = [
+    "youtube-transcript-api",
+    "openai"
+]
+
+[project.scripts]
+summarize-youtube = "summarize_youtube.cli:main" 
